@@ -3,6 +3,7 @@ import type { FollowResponse } from "../../../../Types/Follow/FollowResponse.ts"
 import { qk } from "../../../../Constants/QueryConstants/queryKeys.ts";
 import { useEffect } from "react";
 import { GET_FOLLOW_COUNTS_BY_USER_ID } from "../../../../Constants/RequestConstants/paths.ts";
+import { USE_MOCK_MODE, mockGetData } from "../../../../Utils/MockData/mockService.ts";
 
 export function useFollowCaches(userId: number) {
   const qc = useQueryClient();
@@ -26,6 +27,15 @@ export function useFollowCaches(userId: number) {
 export const fetchFollowResponse = async (
   userId: number
 ): Promise<FollowResponse> => {
+  if (USE_MOCK_MODE) {
+    const data = await mockGetData<{ followers: number; following: number }>(GET_FOLLOW_COUNTS_BY_USER_ID(userId));
+    return {
+      followerIds: [],
+      followingIds: [],
+      ...data,
+    };
+  }
+  
   const r = await fetch(GET_FOLLOW_COUNTS_BY_USER_ID(userId));
   if (!r.ok) throw new Error("failed");
   return r.json();

@@ -1,5 +1,6 @@
 import { LOGOUT } from "../../Constants/RequestConstants/paths.ts";
 import { WideActionButton } from "../../Components/Atoms/Button/WideActionButton.tsx";
+import { USE_MOCK_MODE } from "../../Utils/MockData/mockService.ts";
 
 type LogoutButtonProps = {
   show?: boolean;
@@ -9,7 +10,9 @@ export function LogoutButton({ show }: LogoutButtonProps) {
 
 
   async function logout() {
+    if (!USE_MOCK_MODE) {
     await fetch(LOGOUT, { method: "POST", credentials: "include" });
+    }
     window.location.href = "/auth";
   }
 

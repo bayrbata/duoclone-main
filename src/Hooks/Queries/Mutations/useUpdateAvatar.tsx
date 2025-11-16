@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { UserType } from "../../../Types/User/UserType.ts";
 import {UPDATE_AVATAR} from "../../../Constants/RequestConstants/paths.ts";
 import {qk} from "../../../Constants/QueryConstants/queryKeys.ts";
+import { USE_MOCK_MODE, mockSubmitData } from "../../../Utils/MockData/mockService.ts";
 
 interface UpdateAvatarVariables {
   selectedAvatar: string;
@@ -13,6 +14,10 @@ export function useUpdateAvatar() {
   return useMutation<UserType, Error, UpdateAvatarVariables>({
     mutationFn: async (variables: UpdateAvatarVariables): Promise<UserType> => {
       const { selectedAvatar } = variables;
+
+      if (USE_MOCK_MODE) {
+        return mockSubmitData<UserType>(UPDATE_AVATAR, { selectedAvatar });
+      }
 
       const res = await fetch(UPDATE_AVATAR, {
         method: "POST",

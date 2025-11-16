@@ -32,7 +32,33 @@ export function LessonPage() {
     return <SpinnerPage />;
   }
 
+  // Check if exercises array is empty or position is invalid
+  if (exercises.length === 0) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">No exercises available</h2>
+          <p className="text-gray-600">This lesson doesn't have any exercises yet.</p>
+        </div>
+      </div>
+    );
+  }
+
   const numPosition = Number(position);
+  const currentExercise = exercises[numPosition];
+
+  // Check if current exercise exists
+  if (!currentExercise) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">Exercise not found</h2>
+          <p className="text-gray-600">The requested exercise doesn't exist.</p>
+        </div>
+      </div>
+    );
+  }
+
   const completed = lessonResponse ? numPosition + 1 : numPosition;
 
   return (
@@ -45,7 +71,7 @@ export function LessonPage() {
         />
         <div className="my-6 flex w-full lg:px-40 h-full pt-4">
           <ExerciseComponent
-            exercise={exercises[Number(position)]}
+            exercise={currentExercise}
             currentSelectedOptions={currentSelectedOptions}
             addOption={addOption}
             removeOption={removeOption}

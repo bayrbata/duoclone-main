@@ -2,6 +2,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { FollowMutationResponse } from "../../../Types/Follow/FollowMutationResponse.ts";
 import {qk} from "../../../Constants/QueryConstants/queryKeys.ts";
 import {FOLLOW_USER, UNFOLLOW_USER} from "../../../Constants/RequestConstants/paths.ts";
+import { USE_MOCK_MODE, mockSubmitData } from "../../../Utils/MockData/mockService.ts";
+import { MOCK_USER } from "../../../Utils/MockData/mockData.ts";
 
 type FollowMutationParams = {
   followedId: number;
@@ -14,6 +16,10 @@ export function useFollowMutation() {
   return useMutation<FollowMutationResponse, Error, FollowMutationParams>({
     mutationFn: async ({ followedId, isFollowing }) => {
       const path = isFollowing ? UNFOLLOW_USER : FOLLOW_USER;
+
+      if (USE_MOCK_MODE) {
+        return mockSubmitData<FollowMutationResponse>(path, { followedId });
+      }
 
       const response = await fetch(path, {
         method: "POST",

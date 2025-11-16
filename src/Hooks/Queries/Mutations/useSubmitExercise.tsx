@@ -4,6 +4,7 @@ import type { ExerciseAttemptResponse } from "../../../Types/Lesson/ExerciseAtte
 import { useCallback } from "react";
 import type {useOptionsReturn} from "../../Logic/Lesson/useOptions.tsx";
 import {SUBMIT_EXERCISE_ATTEMPT} from "../../../Constants/RequestConstants/paths.ts";
+import { USE_MOCK_MODE, mockSubmitData } from "../../../Utils/MockData/mockService.ts";
 
 type Args = {
   enabled: boolean;
@@ -49,6 +50,16 @@ export function useSubmitExercise({
         return;
 
       try {
+        let result: ExerciseAttemptResponse;
+        
+        if (USE_MOCK_MODE) {
+          result = await mockSubmitData<ExerciseAttemptResponse>(SUBMIT_EXERCISE_ATTEMPT, {
+            exerciseId: exercises[Number(position)].id,
+            optionIds: optsState.currentSelectedOptions.map(
+              (option) => option.id
+            ),
+          });
+        } else {
         const response = await fetch(SUBMIT_EXERCISE_ATTEMPT, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -65,7 +76,8 @@ export function useSubmitExercise({
           throw new Error(`Response status: ${response.status}`);
         }
 
-        const result: ExerciseAttemptResponse = await response.json();
+          result = await response.json();
+        }
 
         if (result.correct) {
           correctSound.play();

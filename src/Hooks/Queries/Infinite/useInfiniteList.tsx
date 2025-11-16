@@ -6,6 +6,7 @@ import {
 import { useEffect } from "react";
 import { GET_PAGINATED_LEADERBOARD } from "../../../Constants/RequestConstants/paths.ts";
 import type { UserType } from "../../../Types/User/UserType.ts";
+import { USE_MOCK_MODE, mockGetData } from "../../../Utils/MockData/mockService.ts";
 
 type Page = { users: UserType[]; nextCursor: string | null };
 
@@ -22,6 +23,10 @@ export function useInfiniteList() {
     queryKey: ["leaderboard"],
     initialPageParam: null,
     queryFn: async ({ pageParam }) => {
+      if (USE_MOCK_MODE) {
+        return mockGetData<Page>(GET_PAGINATED_LEADERBOARD(pageParam, 20));
+      }
+      
       const r = await fetch(GET_PAGINATED_LEADERBOARD(pageParam, 20));
       if (!r.ok) throw new Error("failed");
       return (await r.json()) as Page;

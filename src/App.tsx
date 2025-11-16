@@ -15,54 +15,60 @@ import { GOOGLE_CLIENT_ID } from "./Constants/env.ts";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { AuthGuard } from "./features/Auth/AuthGuard";
 import { AvatarPage } from "./features/Profile/Avatar/AvatarPage";
+import { USE_MOCK_MODE } from "./Utils/MockData/mockService.ts";
 
 function App() {
-  return (
-    <Router>
-      <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-        <div className="w-dvw h-dvh flex flex-col overflow-auto bg-duoBackground">
-          <Routes>
-            <Route path="/auth" element={<LoginPage />} />
+  const AppContent = () => (
+    <div className="w-dvw h-dvh flex flex-col overflow-auto bg-duoBackground">
+      <Routes>
+        <Route path="/auth" element={<LoginPage />} />
 
-            <Route element={<AuthGuard />}>
-              <Route element={<MainLayout />}>
-                <Route element={<LearnHeaderLayout />}>
-                  <Route path="" element={<SectionPage />} />
-                  <Route
-                    path="/profile/:userId/friends"
-                    element={<FriendsPage />}
-                  />
-                  <Route
-                    path="/courses"
-                    element={<CoursesPage title="All Languages" />}
-                  />
-                  <Route
-                    path="/courses/:userId"
-                    element={<CoursesPage title="Languages" />}
-                  />
-                </Route>
-                <Route path="/leaderboard" element={<LeaderboardPage />} />
-                <Route path="/quests" element={<QuestsPage />} />
-                <Route path="/profile/:userId" element={<ProfilePage />} />
-                <Route path="/avatar" element={<AvatarPage />} />
-              </Route>
-
+        <Route element={<AuthGuard />}>
+          <Route element={<MainLayout />}>
+            <Route element={<LearnHeaderLayout />}>
+              <Route path="" element={<SectionPage />} />
               <Route
-                path="/auth/courses"
-                element={<CoursesPage title="Choose your first language" />}
-              />
-
-              <Route
-                path="/lessons/:lessonId/:position"
-                element={<LessonPage />}
+                path="/profile/:userId/friends"
+                element={<FriendsPage />}
               />
               <Route
-                path="/lessons/:lessonId/complete"
-                element={<LessonCompletePage />}
+                path="/courses"
+                element={<CoursesPage title="All Languages" />}
+              />
+              <Route
+                path="/courses/:userId"
+                element={<CoursesPage title="Languages" />}
               />
             </Route>
-          </Routes>
-        </div>
+            <Route path="/leaderboard" element={<LeaderboardPage />} />
+            <Route path="/quests" element={<QuestsPage />} />
+            <Route path="/profile/:userId" element={<ProfilePage />} />
+            <Route path="/avatar" element={<AvatarPage />} />
+          </Route>
+
+          <Route
+            path="/auth/courses"
+            element={<CoursesPage title="Choose your first language" />}
+          />
+
+          <Route
+            path="/lessons/:lessonId/:position"
+            element={<LessonPage />}
+          />
+          <Route
+            path="/lessons/:lessonId/complete"
+            element={<LessonCompletePage />}
+          />
+        </Route>
+      </Routes>
+    </div>
+  );
+
+  return (
+    <Router>
+      {/* Always provide GoogleOAuthProvider, but with dummy client ID in mock mode */}
+      <GoogleOAuthProvider clientId={USE_MOCK_MODE || !GOOGLE_CLIENT_ID ? "dummy-client-id" : GOOGLE_CLIENT_ID}>
+        <AppContent />
       </GoogleOAuthProvider>
     </Router>
   );

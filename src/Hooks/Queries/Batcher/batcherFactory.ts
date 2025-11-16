@@ -1,4 +1,5 @@
 import { parseIdsToRequestParam } from "../../../Utils/Text/pathParsers.ts";
+import { USE_MOCK_MODE, mockGetData } from "../../../Utils/MockData/mockService.ts";
 
 type CreateFn = <U, I>(args: {
   fetcher: (ids: I[]) => Promise<U[]>;
@@ -23,6 +24,11 @@ export function makeIdBatcher<T extends { id: number }>({
 }) {
   return createFn<T, number>({
     fetcher: async (ids: number[]) => {
+      if (USE_MOCK_MODE) {
+        const url = getUrlFn(parseIdsToRequestParam(idsKey, ids));
+        return mockGetData<T[]>(url);
+      }
+      
       const res = await fetchImpl(
         getUrlFn(parseIdsToRequestParam(idsKey, ids)),
         { credentials: "include" }

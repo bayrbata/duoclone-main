@@ -139,8 +139,13 @@ export default function LessonPopover({
 
                 <WideActionButton
                   onSubmit={() => {
-                    if (unitColor != "LOCKED") {
+                    console.log("LessonPopover button clicked", { lessonId: lesson.id, unitColor, lessonStatus });
+                    // Allow navigation if lesson is not locked (based on lessonStatus, not unitColor)
+                    if (lessonStatus != "LOCKED") {
+                      console.log("Navigating to lesson", `/lessons/${lesson.id}/0`);
                       navigate(`/lessons/${lesson.id}/0`);
+                    } else {
+                      console.log("Lesson is locked, cannot navigate");
                     }
                   }}
                   isActive={true}
@@ -148,9 +153,9 @@ export default function LessonPopover({
                   activeText={buttonText()}
                   activeColor={`active:shadow-none active:translate-y-[5px] ${
                     style.shadow
-                  }/50 ${unitColor == "LOCKED" ? style.bg : "bg-white"}`}
+                  }/50 ${lessonStatus == "LOCKED" ? style.bg : "bg-white"}`}
                   activeTextColor={`text-lg ${
-                    unitColor == "LOCKED" ? style.lightVersionText : style.text
+                    lessonStatus == "LOCKED" ? style.lightVersionText : style.text
                   }`}
                 />
                 <Popover.Arrow className={`${style.fill}`} />
